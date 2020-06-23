@@ -77,11 +77,11 @@ void TrafficLight::cycleThroughPhases()
             {
             case TrafficLightPhase::red:
                 _currentPhase = TrafficLightPhase::green;
-                // _queue->send(std::move(TrafficLightPhase::green));
+                _queue.send(std::move(TrafficLightPhase::green));
                 break;
             case TrafficLightPhase::green:
                 _currentPhase = TrafficLightPhase::red;
-                // _queue->send(std::move(TrafficLightPhase::red));
+                _queue.send(std::move(TrafficLightPhase::red));
                 break;
             }
 
