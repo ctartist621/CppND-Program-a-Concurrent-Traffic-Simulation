@@ -27,7 +27,7 @@ enum TrafficLightPhase
     green,
 };
 
-class TrafficLight : public TrafficObject
+class TrafficLight : public TrafficObject, public std::enable_shared_from_this<TrafficLight>
 {
 public:
     // constructor / desctructor
@@ -38,6 +38,9 @@ public:
     // typical behaviour methods
     void waitForGreen();
     void simulate();
+
+    // miscellaneous
+    std::shared_ptr<TrafficLight> get_shared_this() { return shared_from_this(); }
 
 private:
     TrafficLightPhase _currentPhase;
