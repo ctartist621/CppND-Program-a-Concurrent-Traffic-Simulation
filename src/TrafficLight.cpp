@@ -1,7 +1,7 @@
 #include <iostream>
 #include <random>
 #include "TrafficLight.h"
-
+#include <chrono>
 /* Implementation of class "MessageQueue" */
 
 /* 
@@ -43,16 +43,44 @@ TrafficLightPhase TrafficLight::getCurrentPhase()
 
 void TrafficLight::simulate()
 {
+    
     // FP.2b : Finally, the private method „cycleThroughPhases“ should be started in a thread when the public method „simulate“ is called. To do this, use the thread queue in the base class. 
 }
+*/
 
 // virtual function which is executed in a thread
 void TrafficLight::cycleThroughPhases()
 {
-    // FP.2a : Implement the function with an infinite loop that measures the time between two loop cycles 
-    // and toggles the current phase of the traffic light between red and green and sends an update method 
-    // to the message queue using move semantics. The cycle duration should be a random value between 4 and 6 seconds. 
-    // Also, the while-loop should use std::this_thread::sleep_for to wait 1ms between two cycles. 
-}
+    // Create a random cycle duration betwen 4 and 6 seconds.
+    long delay = rand() % 3 + 4;
+    std::chrono::time_point<std::chrono::system_clock> lastUpdate;
 
-*/
+    // init stop watch
+    lastUpdate = std::chrono::system_clock::now();
+    while (true)
+    {
+        // sleep at every iteration to reduce CPU usage
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+        // compute time difference to stop watch
+        long timeSinceLastUpdate = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - lastUpdate).count();
+
+        if (timeSinceLastUpdate >= delay)
+        {
+            switch (_currentPhase)
+            {
+            case TrafficLightPhase::red:
+                _currentPhase = TrafficLightPhase::green;
+                // _queue->send(std::move(TrafficLightPhase::green));
+                break;
+            case TrafficLightPhase::green:
+                _currentPhase = TrafficLightPhase::red;
+                // _queue->send(std::move(TrafficLightPhase::red));
+                break;
+            }
+
+            // reset stop watch for next cycle
+            lastUpdate = std::chrono::system_clock::now();
+        }
+    }
+}
